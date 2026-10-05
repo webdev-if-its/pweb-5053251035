@@ -80,12 +80,39 @@ export function buatKartuBuku(buku) {
 //   "Tidak ada buku yang cocok." — jangan biarkan #katalog kosong melompong.
 // - Setiap kartu yang ditampilkan harus bisa diklik (lihat Level 7).
 export function render(data) {
-  // tulis di sini
+  const wadah = document.querySelector('#katalog');
+  const ringkasan = document.querySelector('#ringkasan');
+
+  wadah.textContent = '';
+  ringkasan.textContent = data.length + ' buku ditemukan';
+
+  if (data.length === 0) {
+    wadah.textContent = 'Tidak ada buku yang cocok.';
+    return;
+  }
+
+  for (const buku of data) {
+    const kartu = buatKartuBuku(buku);
+    kartu.addEventListener('click', () => tampilkanDetail(buku));
+    wadah.appendChild(kartu);
+  }
 }
 
 // Level 7 — dipanggil saat sebuah kartu diklik. TODO: tampilkan judul,
 function tampilkanDetail(buku) {
-  // tulis di sini
+  const panel = document.querySelector('#panel-detail');
+  panel.replaceChildren();
+
+  const judul = document.createElement('h3');
+  judul.textContent = buku.judul;
+
+  const penulis = document.createElement('p');
+  penulis.textContent = buku.penulis;
+
+  const harga = document.createElement('p');
+  harga.textContent = formatRupiah(buku.harga);
+
+  panel.append(judul, penulis, harga);
 }
 
 // Level 8 & 9 — TODO: pasang event listener 'submit' pada #form-cari.
