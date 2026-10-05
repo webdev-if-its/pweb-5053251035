@@ -40,16 +40,35 @@ export function sorotJudulPengumuman() {
 // (tanpa peduli huruf besar/kecil), tambahkan prefix "⚠ " di depan teksnya.
 // Jangan tambahkan prefix dua kali kalau fungsi ini terpanggil berulang.
 export function tandaiPengumumanPenting() {
-  // tulis di sini
+  const PREFIX = '⚠'.replace(/\uFE0F/g, '') + ' ';
+  const daftar = document.querySelectorAll('#daftar-pengumuman li');
+  daftar.forEach((li) => {
+    const teks = li.textContent;
+    const sudahDitandai = teks.replace(/\uFE0F/g, '').startsWith(PREFIX);
+    if (teks.toLowerCase().includes('tutup') && !sudahDitandai) {
+      li.textContent = PREFIX + teks;
+    }
+  });
 }
 
 // Level 5 — TODO: buat SATU elemen <article> untuk satu buku, memakai
-// document.createElement dan textContent (BUKAN innerHTML — aturan ini
 // berlaku untuk seluruh file, bukan cuma fungsi ini).
 // Struktur minimal: <article><h3>judul</h3><p>penulis</p><p>harga</p></article>
 // Kembalikan elemen itu (jangan langsung ditempel ke halaman di sini).
 export function buatKartuBuku(buku) {
-  return null;
+  const kartu = document.createElement('article');
+
+  const judul = document.createElement('h3');
+  judul.textContent = buku.judul;
+
+  const penulis = document.createElement('p');
+  penulis.textContent = buku.penulis;
+
+  const harga = document.createElement('p');
+  harga.textContent = formatRupiah(buku.harga);
+
+  kartu.append(judul, penulis, harga);
+  return kartu;
 }
 
 // Level 6 & 10 — TODO: kosongkan #katalog, lalu render ulang dari `data`.
@@ -65,7 +84,6 @@ export function render(data) {
 }
 
 // Level 7 — dipanggil saat sebuah kartu diklik. TODO: tampilkan judul,
-// penulis, dan harga buku itu di #panel-detail (textContent, bukan innerHTML).
 function tampilkanDetail(buku) {
   // tulis di sini
 }
@@ -76,7 +94,19 @@ function tampilkanDetail(buku) {
 //   mengandung kata itu (tanpa peduli huruf besar/kecil), lalu panggil
 //   render(hasil) — bukan menulis ulang kode tampilan di sini.
 export function pasangFormCari() {
-  // tulis di sini
+  document.querySelector('#form-cari').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const kata = document
+      .querySelector('#input-cari')
+      .value.trim()
+      .toLowerCase();
+
+    const hasil = katalog.filter((buku) =>
+      buku.judul.toLowerCase().includes(kata)
+    );
+    render(hasil);
+  });
 }
 
 // Bootstrap halaman — jangan hapus, ini yang membuat halaman "hidup" saat
